@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Scissors, PenTool, FileSpreadsheet, ChevronLeft, Sparkles, ArrowLeft } from 'lucide-react';
+import { Scissors, PenTool, FileSpreadsheet, ChevronLeft, Sparkles, ArrowLeft, ListOrdered } from 'lucide-react';
 import ExcelSplitter from './components/ExcelSplitter';
 import ExcelMapper from './components/ExcelMapper';
+import ManualSplitter from './components/ManualSplitter';
 
 // ─── Landing Page ───
 function LandingPage({ onSelect }) {
@@ -40,8 +41,8 @@ function LandingPage({ onSelect }) {
           </p>
         </div>
 
-        {/* Dual Path Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 w-full max-w-3xl animate-slide-up stagger-2">
+        {/* Path Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 w-full max-w-5xl animate-slide-up stagger-2">
           {/* Path A: Split */}
           <button
             onClick={() => onSelect('split')}
@@ -75,6 +76,23 @@ function LandingPage({ onSelect }) {
               ابدأ الآن <ChevronLeft size={16} />
             </div>
           </button>
+
+          {/* Path C: Manual Split */}
+          <button
+            onClick={() => onSelect('manual')}
+            className="group glass-card rounded-2xl md:rounded-3xl p-6 md:p-8 text-right transition-all duration-300 hover:border-amber-500/30 hover:shadow-[0_0_60px_-15px_rgba(245,158,11,0.25)] active:scale-[0.98] cursor-pointer"
+          >
+            <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-amber-500/10 border border-amber-500/15 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all">
+              <ListOrdered size={28} className="text-amber-400" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-black text-white mb-2">تقسيم يدوي</h3>
+            <p className="text-slate-500 text-sm font-bold leading-relaxed mb-5">
+              حدد نطاقات الصفوف يدوياً وسمّي كل ملف ناتج بنفسك.
+            </p>
+            <div className="flex items-center gap-2 text-amber-400 text-xs font-black group-hover:gap-3 transition-all">
+              ابدأ الآن <ChevronLeft size={16} />
+            </div>
+          </button>
         </div>
 
         {/* Decorative Grid Cells */}
@@ -99,5 +117,6 @@ export default function App() {
 
   if (view === 'split') return <ExcelSplitter onGoHome={() => setView('home')} />;
   if (view === 'mapper') return <ExcelMapper onGoHome={() => setView('home')} />;
+  if (view === 'manual') return <ManualSplitter onGoHome={() => setView('home')} />;
   return <LandingPage onSelect={setView} />;
 }
