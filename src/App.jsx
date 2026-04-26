@@ -105,7 +105,7 @@ function LandingPage({ onSelect }) {
 
       {/* Footer */}
       <footer className="text-center py-6 text-slate-600 text-xs font-bold animate-fade-in">
-        exel&#123;ar&#125; — صُنع بـ ❤️
+        made by zik&#123;ar&#125;❤️
       </footer>
     </div>
   );
