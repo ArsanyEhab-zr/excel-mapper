@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 import {
   Upload, FileSpreadsheet, ArrowLeft, ArrowRight,
   Download, CheckCircle2, FileText, RefreshCcw,
-  X, AlertCircle, Layout, Settings, Smartphone, Monitor
+  X, AlertCircle, Layout, Settings, Smartphone, Monitor, Scissors
 } from 'lucide-react';
 
 // --- 1. Error Boundary (Security & Stability) ---
@@ -21,7 +21,7 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-8 text-center bg-rose-50 border border-rose-200 text-rose-700 rounded-3xl m-4 max-w-lg mx-auto mt-20" dir="rtl">
+        <div className="p-8 text-center bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-3xl m-4 max-w-lg mx-auto mt-20" dir="rtl">
           <AlertCircle className="mx-auto mb-4" size={48} />
           <h2 className="text-xl font-black mb-2">عذراً، حدث خطأ غير متوقع!</h2>
           <p className="text-sm font-bold opacity-80">{this.state.error?.toString()}</p>
@@ -37,7 +37,7 @@ class ErrorBoundary extends Component {
 
 // --- Helper Components ---
 const GlassCard = ({ children, className = "" }) => (
-  <div className={`bg-white/80 backdrop-blur-xl border border-white/50 shadow-xl rounded-3xl p-6 md:p-8 ${className}`}>
+  <div className={`glass-card rounded-2xl md:rounded-3xl p-5 md:p-8 transition-all duration-300 ${className}`}>
     {children}
   </div>
 );
@@ -47,22 +47,22 @@ const StepIndicator = ({ step, currentStep, label, icon: Icon }) => {
   const isCompleted = currentStep > step;
 
   return (
-    <div className={`flex flex-col md:flex-row items-center md:space-x-3 md:space-x-reverse transition-all duration-300 ${isActive ? 'opacity-100 scale-105' : 'opacity-60 scale-100'}`}>
-      <div className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center transition-colors shadow-lg mb-2 md:mb-0 ${
-        isCompleted ? 'bg-emerald-500 text-white' : isActive ? 'bg-blue-600 text-white' : 'bg-white/80 text-slate-400 border border-slate-200'
+    <div className={`flex flex-col md:flex-row items-center gap-2 md:gap-3 transition-all duration-300 ${isActive ? 'opacity-100 scale-105' : 'opacity-40 scale-100'}`}>
+      <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center transition-colors shadow-lg ${
+        isCompleted ? 'bg-emerald-500 text-white' : isActive ? 'bg-emerald-600 text-white' : 'bg-white/5 text-slate-500 border border-white/10'
       }`}>
         {isCompleted ? <CheckCircle2 size={20} /> : <Icon size={20} />}
       </div>
       <div className="text-center md:text-right">
-        <p className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-400">الخطوة {step}</p>
-        <p className="text-xs md:text-sm font-bold text-slate-800">{label}</p>
+        <p className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">الخطوة {step}</p>
+        <p className="text-xs md:text-sm font-bold text-slate-300">{label}</p>
       </div>
     </div>
   );
 };
 
 // --- Main Component ---
-function ExcelSplitterCore() {
+function ExcelSplitterCore({ onGoHome }) {
   const [currentStep, setCurrentStep] = useState(1);
   
   // Data States
@@ -296,11 +296,23 @@ function ExcelSplitterCore() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 font-sans" dir="rtl">
+    <div className="max-w-6xl mx-auto px-4 py-8 font-sans grid-bg min-h-screen" dir="rtl">
+      {/* Home button */}
+      {onGoHome && (
+        <div className="flex items-center justify-between mb-8 animate-fade-in">
+          <button onClick={onGoHome} className="flex items-center gap-2 text-slate-400 hover:text-emerald-400 font-bold text-sm bg-white/5 hover:bg-white/10 px-4 py-2.5 rounded-xl border border-white/5 hover:border-emerald-500/20 transition-all active:scale-95">
+            <ArrowRight size={18} /> الرئيسية
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center"><Scissors size={16} className="text-emerald-400" /></div>
+            <span className="text-sm font-bold text-slate-500">تقسيم الإكسيل</span>
+          </div>
+        </div>
+      )}
       {/* Header */}
-      <div className="text-center mb-10">
-        <h2 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight flex items-center justify-center gap-3">
-          <FileSpreadsheet className="text-blue-600" size={40} />
+      <div className="text-center mb-10 animate-slide-up">
+        <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight flex items-center justify-center gap-3">
+          <FileSpreadsheet className="text-emerald-400" size={40} />
           مُقسّم الإكسيل الذكي
         </h2>
         <p className="text-slate-500 mt-3 max-w-2xl mx-auto font-bold">
@@ -309,36 +321,36 @@ function ExcelSplitterCore() {
       </div>
 
       {/* Stepper */}
-      <div className="flex flex-row justify-between items-start md:items-center mb-10 bg-white/60 p-4 md:p-6 rounded-3xl shadow-sm border border-slate-200 gap-2 md:gap-6 overflow-x-auto custom-scrollbar">
+      <div className="flex flex-row justify-between items-start md:items-center mb-10 glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl gap-2 md:gap-6 overflow-x-auto custom-scrollbar animate-slide-up stagger-1">
         <StepIndicator step={1} currentStep={currentStep} label="البيانات" icon={Upload} />
-        <div className="flex-1 h-1 bg-slate-200 rounded-full hidden md:block opacity-50 relative top-6">
-           <div className={`h-full bg-blue-500 rounded-full transition-all ${currentStep > 1 ? 'w-full' : 'w-0'}`}></div>
+        <div className="flex-1 h-0.5 bg-white/5 rounded-full hidden md:block relative top-5">
+           <div className={`h-full bg-emerald-500 rounded-full transition-all ${currentStep > 1 ? 'w-full' : 'w-0'}`}></div>
         </div>
         <StepIndicator step={2} currentStep={currentStep} label="التمبليت" icon={FileText} />
-        <div className="flex-1 h-1 bg-slate-200 rounded-full hidden md:block opacity-50 relative top-6">
-           <div className={`h-full bg-blue-500 rounded-full transition-all ${currentStep > 2 ? 'w-full' : 'w-0'}`}></div>
+        <div className="flex-1 h-0.5 bg-white/5 rounded-full hidden md:block relative top-5">
+           <div className={`h-full bg-emerald-500 rounded-full transition-all ${currentStep > 2 ? 'w-full' : 'w-0'}`}></div>
         </div>
         <StepIndicator step={3} currentStep={currentStep} label="المطابقة" icon={Layout} />
-        <div className="flex-1 h-1 bg-slate-200 rounded-full hidden md:block opacity-50 relative top-6">
-           <div className={`h-full bg-blue-500 rounded-full transition-all ${currentStep > 3 ? 'w-full' : 'w-0'}`}></div>
+        <div className="flex-1 h-0.5 bg-white/5 rounded-full hidden md:block relative top-5">
+           <div className={`h-full bg-emerald-500 rounded-full transition-all ${currentStep > 3 ? 'w-full' : 'w-0'}`}></div>
         </div>
         <StepIndicator step={4} currentStep={currentStep} label="التقسيم" icon={Settings} />
       </div>
 
       {/* Error & Success Messages */}
       {error && (
-        <div className="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl flex items-start gap-3 shadow-sm animate-in fade-in slide-in-from-top-2">
+        <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl flex items-start gap-3 animate-slide-up">
           <AlertCircle className="shrink-0 mt-0.5" size={20} />
           <p className="text-sm font-bold flex-1">{error}</p>
-          <button onClick={() => setError(null)} className="hover:bg-rose-200 p-1 rounded-lg transition-colors"><X size={16} /></button>
+          <button onClick={() => setError(null)} className="hover:bg-rose-500/20 p-1 rounded-lg transition-colors"><X size={16} /></button>
         </div>
       )}
       
       {successMsg && (
-        <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl flex items-start gap-3 shadow-sm animate-in fade-in slide-in-from-top-2">
+        <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl flex items-start gap-3 animate-slide-up">
           <CheckCircle2 className="shrink-0 mt-0.5" size={20} />
           <p className="text-sm font-bold flex-1">{successMsg}</p>
-          <button onClick={() => setSuccessMsg(null)} className="hover:bg-emerald-200 p-1 rounded-lg transition-colors"><X size={16} /></button>
+          <button onClick={() => setSuccessMsg(null)} className="hover:bg-emerald-500/20 p-1 rounded-lg transition-colors"><X size={16} /></button>
         </div>
       )}
 
@@ -348,13 +360,13 @@ function ExcelSplitterCore() {
         {/* Step 1: Upload Source Data */}
         {currentStep === 1 && (
           <GlassCard className="text-center animate-in fade-in zoom-in-95">
-            <div className="p-8 md:p-16 border-2 border-dashed border-blue-200 rounded-3xl hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer relative group">
+            <div className="p-8 md:p-14 border-2 border-dashed border-emerald-500/20 rounded-2xl hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all cursor-pointer relative group">
               <input type="file" accept=".xlsx, .xls, .csv" onChange={handleSourceUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full" />
               <div className="flex flex-col items-center">
-                <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-20 h-20 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 group-hover:scale-110 transition-transform">
                   <Upload size={36} />
                 </div>
-                <h3 className="text-2xl font-black text-slate-800 mb-3">ارفع ملف البيانات الأصلي</h3>
+                <h3 className="text-2xl font-black text-white mb-3">ارفع ملف البيانات الأصلي</h3>
                 <p className="text-slate-500 font-bold max-w-sm mx-auto text-sm leading-relaxed">
                   هذا هو الملف الكبير الذي يحتوي على البيانات التي ترغب في تقسيمها.
                 </p>
@@ -366,23 +378,23 @@ function ExcelSplitterCore() {
         {/* Step 2: Upload Template */}
         {currentStep === 2 && (
           <GlassCard className="animate-in fade-in zoom-in-95">
-            <div className="flex flex-col sm:flex-row items-center justify-between mb-8 pb-4 border-b border-slate-100 gap-4">
-              <div className="flex items-center gap-2 text-blue-600 font-black text-sm bg-blue-50 px-4 py-2 rounded-xl w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-center justify-between mb-8 pb-4 border-b border-white/5 gap-4">
+              <div className="flex items-center gap-2 text-emerald-400 font-black text-sm bg-emerald-500/10 px-4 py-2 rounded-xl w-full sm:w-auto">
                 <CheckCircle2 size={18} />
                 <span className="truncate max-w-[200px]">{sourceFileName}</span>
               </div>
-              <button onClick={() => setCurrentStep(1)} className="text-sm text-slate-500 hover:text-blue-600 font-bold flex items-center bg-slate-50 px-4 py-2 rounded-xl w-full sm:w-auto justify-center">
+              <button onClick={() => setCurrentStep(1)} className="text-sm text-slate-400 hover:text-emerald-400 font-bold flex items-center bg-white/5 px-4 py-2 rounded-xl w-full sm:w-auto justify-center transition-colors">
                 تغيير الملف <ArrowLeft size={16} className="mr-2" />
               </button>
             </div>
             
-            <div className="p-8 md:p-16 border-2 border-dashed border-emerald-200 rounded-3xl hover:border-emerald-400 hover:bg-emerald-50/50 transition-all cursor-pointer relative text-center group">
+            <div className="p-8 md:p-14 border-2 border-dashed border-cyan-500/20 rounded-2xl hover:border-cyan-500/40 hover:bg-cyan-500/5 transition-all cursor-pointer relative text-center group">
               <input type="file" accept=".xlsx, .xls, .csv" onChange={handleTemplateUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full" />
               <div className="flex flex-col items-center">
-                <div className="w-20 h-20 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-20 h-20 bg-cyan-500/10 rounded-2xl flex items-center justify-center text-cyan-400 mb-6 group-hover:scale-110 transition-transform">
                   <FileText size={36} />
                 </div>
-                <h3 className="text-2xl font-black text-slate-800 mb-3">ارفع ملف التمبليت</h3>
+                <h3 className="text-2xl font-black text-white mb-3">ارفع ملف التمبليت</h3>
                 <p className="text-slate-500 font-bold max-w-sm mx-auto text-sm leading-relaxed">
                   ارفع ملف إكسيل فارغ يحتوي فقط على الصف الأول (رؤوس الأعمدة) بالشكل الجديد المطلوب.
                 </p>
@@ -394,52 +406,52 @@ function ExcelSplitterCore() {
         {/* Step 3: Column Mapping */}
         {currentStep === 3 && (
           <GlassCard className="animate-in fade-in zoom-in-95">
-             <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-100">
+             <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-white/5">
                <div className="flex flex-wrap gap-3">
-                  <span className="text-xs font-bold bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg border border-blue-100">البيانات: {sourceFileName}</span>
-                  <span className="text-xs font-bold bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-100">التمبليت: {templateFileName}</span>
+                  <span className="text-xs font-bold bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-lg border border-emerald-500/15">البيانات: {sourceFileName}</span>
+                  <span className="text-xs font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1.5 rounded-lg border border-cyan-500/15">التمبليت: {templateFileName}</span>
                </div>
                <div className="flex gap-2 w-full sm:w-auto">
-                 <button onClick={() => setCurrentStep(2)} className="flex-1 sm:flex-none text-sm text-slate-500 hover:text-blue-600 font-bold flex items-center justify-center bg-slate-50 px-4 py-2 rounded-xl">
+                 <button onClick={() => setCurrentStep(2)} className="flex-1 sm:flex-none text-sm text-slate-400 hover:text-emerald-400 font-bold flex items-center justify-center bg-white/5 px-4 py-2 rounded-xl transition-colors">
                    السابق
                  </button>
-                 <button onClick={() => setCurrentStep(4)} className="flex-1 sm:flex-none text-sm text-white bg-blue-600 hover:bg-blue-700 font-bold flex items-center justify-center px-6 py-2 rounded-xl shadow-md">
+                 <button onClick={() => setCurrentStep(4)} className="flex-1 sm:flex-none text-sm text-white bg-emerald-600 hover:bg-emerald-500 font-bold flex items-center justify-center px-6 py-2 rounded-xl shadow-md transition-colors">
                    التالي: التقسيم <ArrowLeft size={16} className="mr-2" />
                  </button>
                </div>
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-2xl mb-6">
-              <h4 className="font-black text-slate-700 mb-1">مطابقة الأعمدة</h4>
+            <div className="bg-white/[0.03] border border-white/5 p-4 rounded-2xl mb-6">
+              <h4 className="font-black text-slate-200 mb-1">مطابقة الأعمدة</h4>
               <p className="text-sm text-slate-500 font-bold">حدد لكل عمود في التمبليت الجديد العمود المقابل له من ملف البيانات الأصلي.</p>
             </div>
 
             <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
               {templateColumns.map((tCol) => (
-                <div key={tCol} className="flex flex-col sm:flex-row sm:items-center bg-white border border-slate-200 rounded-2xl p-4 gap-4 hover:border-blue-300 transition-colors">
+                <div key={tCol} className="flex flex-col sm:flex-row sm:items-center bg-white/[0.02] border border-white/5 rounded-xl p-4 gap-4 hover:border-emerald-500/20 transition-colors">
                   <div className="sm:w-1/3 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
                       <Layout size={16} />
                     </div>
-                    <span className="font-black text-slate-700 text-sm">{tCol}</span>
+                    <span className="font-black text-slate-200 text-sm">{tCol}</span>
                   </div>
                   
-                  <div className="hidden sm:flex items-center text-slate-300">
+                  <div className="hidden sm:flex items-center text-slate-600">
                     <ArrowLeft size={20} />
                   </div>
                   
                   <div className="sm:w-1/2 relative w-full">
                     <select
-                      className="w-full bg-slate-50 border border-slate-200 text-slate-700 font-bold text-sm rounded-xl px-4 py-3 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer"
+                      className="w-full bg-white/5 border border-white/10 text-slate-300 font-bold text-sm rounded-xl px-4 py-3 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/30 transition-all cursor-pointer"
                       value={mappings[tCol] || ""}
                       onChange={(e) => handleMappingChange(tCol, e.target.value)}
                     >
-                      <option value="">-- تجاهل (اتركه فارغاً) --</option>
+                      <option value="" className="bg-gray-900">-- تجاهل (اتركه فارغاً) --</option>
                       {sourceColumns.map(sCol => (
-                        <option key={sCol} value={sCol}>{sCol}</option>
+                        <option key={sCol} value={sCol} className="bg-gray-900">{sCol}</option>
                       ))}
                     </select>
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">▼</div>
                   </div>
                 </div>
               ))}
@@ -450,9 +462,9 @@ function ExcelSplitterCore() {
         {/* Step 4: Split Settings & Download */}
         {currentStep === 4 && (
           <GlassCard className="animate-in fade-in zoom-in-95">
-             <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
-               <h3 className="text-xl font-black text-slate-800">إعدادات التقسيم والتنزيل</h3>
-               <button onClick={() => setCurrentStep(3)} className="text-sm text-slate-500 hover:text-blue-600 font-bold flex items-center bg-slate-50 px-4 py-2 rounded-xl">
+             <div className="flex justify-between items-center mb-8 pb-4 border-b border-white/5">
+               <h3 className="text-xl font-black text-white">إعدادات التقسيم والتنزيل</h3>
+               <button onClick={() => setCurrentStep(3)} className="text-sm text-slate-400 hover:text-emerald-400 font-bold flex items-center bg-white/5 px-4 py-2 rounded-xl transition-colors">
                  رجوع للمطابقة <ArrowRight size={16} className="ml-2" />
                </button>
             </div>
@@ -460,63 +472,63 @@ function ExcelSplitterCore() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
               {/* Split Settings */}
               <div className="space-y-6">
-                <div className="bg-blue-50/50 border border-blue-100 p-5 rounded-2xl">
-                  <h4 className="font-black text-blue-800 mb-4 flex items-center gap-2">
+                <div className="bg-emerald-500/5 border border-emerald-500/15 p-5 rounded-2xl">
+                  <h4 className="font-black text-emerald-400 mb-4 flex items-center gap-2">
                     <Settings size={18} /> طريقة التقسيم
                   </h4>
                   
                   <div className="space-y-4">
-                    <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-blue-50 border border-transparent transition-colors">
+                    <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-white/5 border border-transparent transition-colors">
                       <input 
                         type="radio" 
                         name="splitStrategy" 
                         value="rows" 
                         checked={splitStrategy === 'rows'}
                         onChange={() => setSplitStrategy('rows')}
-                        className="w-5 h-5 text-blue-600 focus:ring-blue-500" 
+                        className="w-5 h-5 text-emerald-600 focus:ring-emerald-500" 
                       />
-                      <span className="font-bold text-slate-700">تقسيم بعدد الصفوف لكل ملف</span>
+                      <span className="font-bold text-slate-300">تقسيم بعدد الصفوف لكل ملف</span>
                     </label>
                     
                     {splitStrategy === 'rows' && (
-                      <div className="mr-8 pr-4 border-r-2 border-blue-200">
+                      <div className="mr-8 pr-4 border-r-2 border-emerald-500/20">
                         <input 
                           type="number" 
                           min="1"
                           value={splitRowCount}
                           onChange={(e) => setSplitRowCount(e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm font-bold text-slate-200 focus:outline-none focus:border-emerald-500/30 focus:ring-2 focus:ring-emerald-500/20"
                           placeholder="مثال: 100"
                         />
                         <p className="text-xs text-slate-500 mt-2 font-bold">كل ملف سيحتوي على {splitRowCount || 0} صف كحد أقصى.</p>
                       </div>
                     )}
 
-                    <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-blue-50 border border-transparent transition-colors">
+                    <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-white/5 border border-transparent transition-colors">
                       <input 
                         type="radio" 
                         name="splitStrategy" 
                         value="column" 
                         checked={splitStrategy === 'column'}
                         onChange={() => setSplitStrategy('column')}
-                        className="w-5 h-5 text-blue-600 focus:ring-blue-500" 
+                        className="w-5 h-5 text-emerald-600 focus:ring-emerald-500" 
                       />
-                      <span className="font-bold text-slate-700">تقسيم حسب قيمة عمود معين</span>
+                      <span className="font-bold text-slate-300">تقسيم حسب قيمة عمود معين</span>
                     </label>
 
                     {splitStrategy === 'column' && (
-                      <div className="mr-8 pr-4 border-r-2 border-blue-200 relative">
+                      <div className="mr-8 pr-4 border-r-2 border-emerald-500/20 relative">
                         <select
-                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold appearance-none focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm font-bold text-slate-300 appearance-none focus:outline-none focus:border-emerald-500/30 focus:ring-2 focus:ring-emerald-500/20"
                           value={splitColumn}
                           onChange={(e) => setSplitColumn(e.target.value)}
                         >
-                          <option value="" disabled>اختر العمود...</option>
+                          <option value="" disabled className="bg-gray-900">اختر العمود...</option>
                           {templateColumns.map(col => (
-                            <option key={col} value={col}>{col}</option>
+                            <option key={col} value={col} className="bg-gray-900">{col}</option>
                           ))}
                         </select>
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">▼</div>
                         <p className="text-xs text-slate-500 mt-2 font-bold">سيتم إنشاء ملف منفصل لكل قيمة مختلفة في هذا العمود.</p>
                       </div>
                     )}
@@ -526,16 +538,16 @@ function ExcelSplitterCore() {
 
               {/* Download Settings */}
               <div className="space-y-6">
-                <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl h-full flex flex-col">
-                  <h4 className="font-black text-slate-800 mb-4 flex items-center gap-2">
-                    {isMobileDevice ? <Smartphone className="text-indigo-600" size={18} /> : <Monitor className="text-indigo-600" size={18} />}
+                <div className="bg-white/[0.02] border border-white/5 p-5 rounded-2xl h-full flex flex-col">
+                  <h4 className="font-black text-slate-200 mb-4 flex items-center gap-2">
+                    {isMobileDevice ? <Smartphone className="text-emerald-400" size={18} /> : <Monitor className="text-emerald-400" size={18} />}
                     إعدادات التنزيل
                   </h4>
                   
                   <div className="flex-1">
                     {isMobileDevice ? (
-                      <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-xl mb-4">
-                        <p className="text-sm text-indigo-800 font-bold leading-relaxed mb-3">
+                      <div className="bg-cyan-500/5 border border-cyan-500/15 p-4 rounded-xl mb-4">
+                        <p className="text-sm text-cyan-300 font-bold leading-relaxed mb-3">
                           يبدو أنك تستخدم هاتفاً محمولاً. التنزيل العادي (ملفات منفصلة) مدعوم بشكل أفضل على الهواتف.
                         </p>
                         <label className="flex items-start gap-3 cursor-pointer">
@@ -543,23 +555,23 @@ function ExcelSplitterCore() {
                             type="checkbox" 
                             checked={forceZipOnMobile}
                             onChange={(e) => setForceZipOnMobile(e.target.checked)}
-                            className="mt-1 w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500" 
+                            className="mt-1 w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500" 
                           />
-                          <span className="text-sm font-bold text-slate-700">
+                          <span className="text-sm font-bold text-slate-300">
                             تجميع الملفات في ملف مضغوط (.zip) بدلاً من ذلك <span className="text-xs text-slate-500 block mt-1">(قد يتطلب تطبيقاً لفك الضغط)</span>
                           </span>
                         </label>
                       </div>
                     ) : (
-                      <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl mb-4">
-                        <p className="text-sm text-emerald-800 font-bold leading-relaxed">
+                      <div className="bg-emerald-500/5 border border-emerald-500/15 p-4 rounded-xl mb-4">
+                        <p className="text-sm text-emerald-300 font-bold leading-relaxed">
                           أنت تستخدم جهاز كمبيوتر. سيتم تجميع جميع الملفات المقسمة تلقائياً في ملف مضغوط (.zip) واحد لتوفير الوقت وسهولة التنزيل.
                         </p>
                       </div>
                     )}
                   </div>
 
-                  <div className="pt-4 mt-auto border-t border-slate-200">
+                  <div className="pt-4 mt-auto border-t border-white/5">
                      <p className="text-xs font-bold text-slate-500 mb-4 flex items-center gap-2">
                        <AlertCircle size={14} /> تأكد من مراجعة الإعدادات قبل التنزيل.
                      </p>
@@ -567,12 +579,12 @@ function ExcelSplitterCore() {
                        <button 
                          onClick={handleDownload} 
                          disabled={isLoading || (splitStrategy === 'column' && !splitColumn)} 
-                         className="flex-1 flex items-center justify-center px-6 py-4 bg-blue-600 text-white font-black text-lg rounded-2xl hover:bg-blue-700 shadow-xl hover:shadow-blue-500/40 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                         className="flex-1 flex items-center justify-center px-6 py-4 bg-emerald-600 text-white font-black text-lg rounded-2xl hover:bg-emerald-500 shadow-xl hover:shadow-emerald-500/30 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                        >
                          {isLoading ? <RefreshCcw className="animate-spin ml-3" size={24} /> : <Download className="ml-3 group-hover:-translate-y-1 transition-transform" size={24} />}
                          {isMobileDevice && !forceZipOnMobile ? 'تنزيل الملفات تباعاً' : 'تنزيل كملف ZIP'}
                        </button>
-                       <button onClick={resetAll} className="flex items-center justify-center text-rose-500 font-black bg-rose-50 hover:bg-rose-100 px-6 py-4 rounded-2xl transition-colors shrink-0">
+                       <button onClick={resetAll} className="flex items-center justify-center text-rose-400 font-black bg-rose-500/10 hover:bg-rose-500/20 px-6 py-4 rounded-2xl transition-colors shrink-0">
                          <RefreshCcw size={20} />
                        </button>
                      </div>
