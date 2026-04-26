@@ -232,7 +232,7 @@ export default function ExcelMapper({ onGoHome }) {
       {/* Page Title */}
       <div className="text-center mb-12 animate-slide-up">
         <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-3">
-          منظف <span className="text-gradient">أرشيف الخدمة</span>
+          منظف <span className="text-gradient">الإكسيل</span>
         </h1>
         <p className="text-slate-500 text-sm md:text-base font-bold max-w-xl mx-auto">
           أداة سحرية لدمج الأعمدة، استعادة أصفار التليفونات المفقودة، وتجهيز الداتا للأبلكيشن.
